@@ -26,40 +26,39 @@ def make_post(content, categorys='0', tags='0', date = None):
     post = WordPressPost()
     post.title = content['title']
     post.content = content['body']
-
+    post.terms_names = {}
     if tags[0] != '0':
-
-        post.terms_names = {
-            'post_tag': tags
-        }
+        post.terms_names['post_tag'] = tags
     try:
         categorys[0] == 0
     except IndexError:
         pass
     else:
         if categorys[0] != '0':
-            post.terms_names = {
-                'category': categorys
-            }
+            post.terms_names['category'] = categorys
 
     # Lets Now Check How To Upload Media Files
-    filename = content['image']
-    data = {
-        'name': content['title']+ '.jpeg',
-        'type': 'image/jpeg'  # Media Type
-    }
-    # Now We Have To Read Image From Our Local Directory !
-    with open(filename, 'rb') as img:
-        data['bits'] = xmlrpc_client.Binary(img.read())
-        response = wp.call(media.UploadFile(data))
-    attachment_id = response['id']
+    filename = ''
+    if 'image' in content:
+        filename = content['image']
+    # if filename is empty, then we don't need to upload any image
+    if filename != '':
+        data = {
+            'name': content['title']+ '.jpeg',
+            'type': 'image/jpeg'  # Media Type
+        }
+        # Now We Have To Read Image From Our Local Directory !
+        with open(filename, 'rb') as img:
+            data['bits'] = xmlrpc_client.Binary(img.read())
+            response = wp.call(media.UploadFile(data))
+        attachment_id = response['id']
 
-    # Above Code Just Uploads The Image To Our Gallery
-    # For Adding It In Our Main Post We Need To Save Attachment ID
-    post.thumbnail = attachment_id
+        # Above Code Just Uploads The Image To Our Gallery
+        # For Adding It In Our Main Post We Need To Save Attachment ID
+        post.thumbnail = attachment_id
 
-    #deletando do pc a imagem
-    remove(filename)
+        #deletando do pc a imagem
+        remove(filename)
 
     #setando para o post ser publicado (nao ficar de rascunho)
     post.post_status = 'publish'
