@@ -1,3 +1,4 @@
 unidecode
 python-wordpress-xmlrpc
 newspaper3k
+python-frontmatter

@@ -37,10 +37,10 @@ def post_one(markdown_text):
     markdown_body = remove_title_in_body(markdown_body)
     html_content = mistune.markdown(markdown_body) # 使用markdown和markdown2有格式混乱的情况，改用mistune
     title = front_matter['title']
-    categorys = front_matter['categorys']
+    categories = front_matter['categories']
     tags = front_matter['tags']
     json_content = {"title":title, "body": html_content}
-    make_post( json_content, categorys, tags, None)
+    make_post( json_content, categories, tags, None)
 
 def relocate_all_image_in_markdown_text(markdown_body):
     markdown_image_replaced_text = markdown_body.replace("](../../../picture/", ']('+image_base_url)
@@ -61,5 +61,6 @@ def remove_title_in_body(markdown_body):
     if (count == 1) :
         markdown_body = markdown_body.replace(title+'\n', '')
         return markdown_body
+    return markdown_body
         
 post(filepath)
